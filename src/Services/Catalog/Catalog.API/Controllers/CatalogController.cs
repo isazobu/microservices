@@ -19,7 +19,7 @@ namespace Catalog.API.Controllers
 
         public CatalogController(IProductRepository repository, ILogger<CatalogController> logger)
         {
-         
+            _repository = repository;
             _logger = logger;
         }
 
