@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Catalog.API.Entities;
 using Catalog.API.Repository;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -45,17 +46,18 @@ namespace Catalog.API.Controllers
             }
             return Ok(product);
         }
-        [Route("[action]/{category}",Name= "GetProductByCategory")]
+   
+        [Route("{category}", Name = "GetProductByCategory")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Product>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProductByCategory(string categoryName)
+        public async Task<ActionResult<IEnumerable<Product>>> GetProductByCategory(string category)
         {
-            var products = await _repository.GetProductByCategory(categoryName);
+            var products = await _repository.GetProductByCategory(category);
             return Ok(products);
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(Product), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Product), (int)HttpStatusCode.Created)]
         public async Task<ActionResult<Product>> CreateProduct([FromBody] Product product)
         {
             await _repository.CreateProduct(product);
@@ -70,9 +72,16 @@ namespace Catalog.API.Controllers
         }
 
         [HttpDelete("{id:length(24)}", Name = "DeleteProduct")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> DeleteProductById(string id)
         {
             return Ok(await _repository.DeleteProduct(id));
+        }
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> DeleteAllProduct()
+        {
+            return Ok(await _repository.DeleteAllProduct());
         }
 
     }

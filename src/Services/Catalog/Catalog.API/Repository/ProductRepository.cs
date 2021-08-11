@@ -39,12 +39,16 @@ namespace Catalog.API.Repository
 
         }
 
+
         public async Task<IEnumerable<Product>> GetProductByCategory(string categoryName)
         {
             FilterDefinition<Product> filter = Builders<Product>.Filter.Eq(p => p.Category, categoryName);
-            return await _context.Products.Find(filter).ToListAsync();
-        }
 
+            return await _context
+                .Products
+                .Find(filter)
+                .ToListAsync();
+        }
         public async Task CreateProduct(Product product)
         {
             await _context.Products.InsertOneAsync(product);
@@ -65,6 +69,13 @@ namespace Catalog.API.Repository
             DeleteResult deleteResult = await _context.Products.DeleteOneAsync(filter);
 
             return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;
+        }
+
+        public async Task<bool> DeleteAllProduct()
+        {
+            
+            DeleteResult isDeleted = await _context.Products.DeleteManyAsync(p=> true);
+            return isDeleted.IsAcknowledged && isDeleted.DeletedCount > 0;
         }
     }
 }
